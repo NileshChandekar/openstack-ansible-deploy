@@ -235,3 +235,139 @@ ansible galera_container -m shell \
 # openstack-ansible setup-openstack.yml
 ```
 
+![logo](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/images/installation-workflow-verify-openstack.png)
+
+##### Verify the API
+
+```
+root@firoz-osa-infra-0:~# lxc-ls -f | grep -i utility
+infra1_utility_container-13e6957f        RUNNING 1         onboot, openstack 10.0.3.190, 192.168.24.249                -    false        
+root@firoz-osa-infra-0:~# 
+```
+
+```
+root@firoz-osa-infra-0:~# lxc-attach  infra1_utility_container-13e6957f
+root@infra1-utility-container-13e6957f:~# 
+```
+
+```
+root@infra1-utility-container-13e6957f:~# source openrc 
+root@infra1-utility-container-13e6957f:~# 
+```
+
+```
+root@infra1-utility-container-13e6957f:~# openstack  hypervisor list 
++----+----------------------------------+-----------------+---------------+-------+
+| ID | Hypervisor Hostname              | Hypervisor Type | Host IP       | State |
++----+----------------------------------+-----------------+---------------+-------+
+|  1 | firoz-osa-cmpt-1.openstack.local | QEMU            | 192.168.24.13 | up    |
+|  2 | firoz-osa-cmpt-0.openstack.local | QEMU            | 192.168.24.12 | up    |
++----+----------------------------------+-----------------+---------------+-------+
+root@infra1-utility-container-13e6957f:~# 
+```
+
+```
+root@infra1-utility-container-13e6957f:~# openstack   compute service list  
++----+----------------+------------------------------------+----------+---------+-------+----------------------------+
+| ID | Binary         | Host                               | Zone     | Status  | State | Updated At                 |
++----+----------------+------------------------------------+----------+---------+-------+----------------------------+
+|  3 | nova-conductor | infra1-nova-api-container-0e13d343 | internal | enabled | up    | 2022-10-13T18:45:10.000000 |
+|  6 | nova-scheduler | infra1-nova-api-container-0e13d343 | internal | enabled | up    | 2022-10-13T18:45:10.000000 |
+|  8 | nova-compute   | firoz-osa-cmpt-1                   | nova     | enabled | up    | 2022-10-13T18:45:10.000000 |
+|  9 | nova-compute   | firoz-osa-cmpt-0                   | nova     | enabled | up    | 2022-10-13T18:45:11.000000 |
++----+----------------+------------------------------------+----------+---------+-------+----------------------------+
+root@infra1-utility-container-13e6957f:~# 
+```
+
+```
+root@infra1-utility-container-13e6957f:~# openstack   network agent  list  
++--------------------------------------+--------------------+-------------------+-------------------+-------+-------+---------------------------+
+| ID                                   | Agent Type         | Host              | Availability Zone | Alive | State | Binary                    |
++--------------------------------------+--------------------+-------------------+-------------------+-------+-------+---------------------------+
+| 014b87d0-dc57-42cd-8006-14016a092aad | DHCP agent         | firoz-osa-infra-0 | nova              | :-)   | UP    | neutron-dhcp-agent        |
+| 2ca5c1db-6cdf-4ce3-ad29-e51548ad5f7b | Metering agent     | firoz-osa-infra-0 | None              | :-)   | UP    | neutron-metering-agent    |
+| 8aa218f2-e5ad-4ed7-b6f8-0064d9804280 | L3 agent           | firoz-osa-infra-0 | nova              | :-)   | UP    | neutron-l3-agent          |
+| b635daa8-91c6-4e88-9f18-6885b690cb6a | Linux bridge agent | firoz-osa-infra-0 | None              | :-)   | UP    | neutron-linuxbridge-agent |
+| dbf7e4f7-7ea4-4060-9dc9-be44d763d2d8 | Metadata agent     | firoz-osa-infra-0 | None              | :-)   | UP    | neutron-metadata-agent    |
+| e5d8cba4-dffb-4ef0-946c-f7400e5403b6 | Linux bridge agent | firoz-osa-cmpt-0  | None              | :-)   | UP    | neutron-linuxbridge-agent |
++--------------------------------------+--------------------+-------------------+-------------------+-------+-------+---------------------------+
+root@infra1-utility-container-13e6957f:~# 
+```
+
+```
+root@infra1-utility-container-13e6957f:~# openstack  endpoint list
++----------------------------------+-----------+--------------+----------------+---------+-----------+---------------------------------------------+
+| ID                               | Region    | Service Name | Service Type   | Enabled | Interface | URL                                         |
++----------------------------------+-----------+--------------+----------------+---------+-----------+---------------------------------------------+
+| 0d10f7e54e0f416f86bb501a75bbb506 | RegionOne | heat         | orchestration  | True    | public    | https://192.168.122.9:8004/v1/%(tenant_id)s |
+| 0d2fb784e3c14ce686c641af3099f50a | RegionOne | heat         | orchestration  | True    | internal  | http://192.168.24.9:8004/v1/%(tenant_id)s   |
+| 3c4f4679e8ff4aeda435049157e792b9 | RegionOne | heat-cfn     | cloudformation | True    | internal  | http://192.168.24.9:8000/v1                 |
+| 3d5d50a7e7c24fccb77320e12957bf2e | RegionOne | neutron      | network        | True    | public    | https://192.168.122.9:9696                  |
+| 3ef842a09004464ba534b0c823990a4b | RegionOne | cinderv3     | volumev3       | True    | admin     | http://192.168.24.9:8776/v3/%(tenant_id)s   |
+| 43511cf941ab48ee884b7d23611a920f | RegionOne | cinderv3     | volumev3       | True    | internal  | http://192.168.24.9:8776/v3/%(tenant_id)s   |
+| 5b25a93cf65b49e496bf3d78ca6182f7 | RegionOne | placement    | placement      | True    | internal  | http://192.168.24.9:8780                    |
+| 5c6c6178e31241a68633746e76030608 | RegionOne | nova         | compute        | True    | public    | https://192.168.122.9:8774/v2.1             |
+| 6da5442ee8814958a75f67aae49d9dc3 | RegionOne | neutron      | network        | True    | admin     | http://192.168.24.9:9696                    |
+| 7ab086d8726449e0b4ffaa349f88aec7 | RegionOne | cinderv3     | volumev3       | True    | public    | https://192.168.122.9:8776/v3/%(tenant_id)s |
+| 8f9c728a510a4bbd9b6575f48c0b06ee | RegionOne | placement    | placement      | True    | admin     | http://192.168.24.9:8780                    |
+| 90f59d1f7af4458db42559d45c3e024e | RegionOne | keystone     | identity       | True    | admin     | http://192.168.24.9:5000                    |
+| 94d31a5c77ea43dc97239611855265b3 | RegionOne | heat-cfn     | cloudformation | True    | public    | https://192.168.122.9:8000/v1               |
+| a4bffe09fe0b4a86a5650f3a871d3569 | RegionOne | nova         | compute        | True    | internal  | http://192.168.24.9:8774/v2.1               |
+| a80b89c5c2a0497eb0875a701348bf25 | RegionOne | keystone     | identity       | True    | internal  | http://192.168.24.9:5000                    |
+| b1d99507428245ccaed8c666fcb88075 | RegionOne | nova         | compute        | True    | admin     | http://192.168.24.9:8774/v2.1               |
+| b4ce579bc9914672bf7e3335a7f554c7 | RegionOne | keystone     | identity       | True    | public    | https://192.168.122.9:5000                  |
+| bcd42762618d42c8b08d65d22f09f0f2 | RegionOne | glance       | image          | True    | public    | https://192.168.122.9:9292                  |
+| bfde9bd281c643638b965591b566650b | RegionOne | placement    | placement      | True    | public    | https://192.168.122.9:8780                  |
+| c03fc55ac25f4c139e0b173addab9f80 | RegionOne | heat         | orchestration  | True    | admin     | http://192.168.24.9:8004/v1/%(tenant_id)s   |
+| e161812c41fd46598c88ac757fd00c95 | RegionOne | heat-cfn     | cloudformation | True    | admin     | http://192.168.24.9:8000/v1                 |
+| e2ca94e55b4b4cfebca30814fcd94ffb | RegionOne | glance       | image          | True    | internal  | http://192.168.24.9:9292                    |
+| e3977e1cc17f417586fc8368d4a568a0 | RegionOne | glance       | image          | True    | admin     | http://192.168.24.9:9292                    |
+| f840ed8379c4407d97e10b33f50e3118 | RegionOne | neutron      | network        | True    | internal  | http://192.168.24.9:9696                    |
++----------------------------------+-----------+--------------+----------------+---------+-----------+---------------------------------------------+
+root@infra1-utility-container-13e6957f:~# 
+```
+
+* Create a sample network and test if we are able to spawn an instance. [Click Here for Script](https://github.com/NileshChandekar/osp_instance_create_test/blob/main/README.md)
+
+* Verify: 
+
+```
+root@infra1-utility-container-13e6957f:~# openstack network list 
++--------------------------------------+---------+--------------------------------------+
+| ID                                   | Name    | Subnets                              |
++--------------------------------------+---------+--------------------------------------+
+| 3409f0c8-5c80-4fa3-861b-55f8cc5e64c0 | private | 53d61e69-0a56-44b2-9f5e-6cd60b13e2d3 |
++--------------------------------------+---------+--------------------------------------+
+root@infra1-utility-container-13e6957f:~# 
+```
+
+```
+root@infra1-utility-container-13e6957f:~# openstack  image list 
++--------------------------------------+--------------+--------+
+| ID                                   | Name         | Status |
++--------------------------------------+--------------+--------+
+| 725adddb-e538-4161-8855-aee00da2e5c8 | cirros_0.3.4 | active |
++--------------------------------------+--------------+--------+
+root@infra1-utility-container-13e6957f:~# 
+```
+
+```
+root@infra1-utility-container-13e6957f:~# openstack  flavor list 
++------+--------------+-----+------+-----------+-------+-----------+
+| ID   | Name         | RAM | Disk | Ephemeral | VCPUs | Is Public |
++------+--------------+-----+------+-----------+-------+-----------+
+| auto | m1.tiny.test | 512 |   10 |         0 |     1 | True      |
++------+--------------+-----+------+-----------+-------+-----------+
+root@infra1-utility-container-13e6957f:~# 
+```
+
+```
+root@infra1-utility-container-13e6957f:~# openstack  server list
++--------------------------------------+------------------------------+--------+---------------------+--------------+--------------+
+| ID                                   | Name                         | Status | Networks            | Image        | Flavor       |
++--------------------------------------+------------------------------+--------+---------------------+--------------+--------------+
+| 1d7a1a07-3985-4cb6-b9d4-62a54df35761 | cirros_A_2022-10-13_11-08-44 | ACTIVE | private=10.10.10.22 | cirros_0.3.4 | m1.tiny.test |
++--------------------------------------+------------------------------+--------+---------------------+--------------+--------------+
+root@infra1-utility-container-13e6957f:~# 
+```
+
