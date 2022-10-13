@@ -166,20 +166,20 @@ Prepare the deployment host
      # apt install bridge-utils debootstrap ifenslave ifenslave-2.6 lsof lvm2 openssh-server sudo tcpdump vlan python3 -y 
      ```
 
+Configure the deployment
+===
+
 
 |Role|Type|OS|
 |----|----|----|
 |Deployer Node|VM|Ubuntu-20.04|
 
 
-Configure the deployment
-===
-
 ![logo](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/images/installation-workflow-configure-deployment.png)
 
 ##### Initial environment configuration¶
 
-* Copy the contents of the /opt/openstack-ansible/etc/openstack_deploy directory to the /etc/openstack_deploy directory.
+* Copy the contents of the ``/opt/openstack-ansible/etc/openstack_deploy`` directory to the ``/etc/openstack_deploy`` directory.
 
      ```
      root@ubuntu:/opt/openstack-ansible# cp -R etc/openstack_deploy/ /etc/
@@ -188,3 +188,50 @@ Configure the deployment
 * Change to the ``/etc/openstack_deploy`` directory. Here is the config files 
 * [openstack_user_config.yml](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/sampleconfigs/openstack_user_config.yml)
 * [user_variables.yml](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/sampleconfigs/user_variables.yml)
+
+
+##### Configuring service credentials¶
+
+```
+# cd /opt/openstack-ansible
+# ./scripts/pw-token-gen.py --file /etc/openstack_deploy/user_secrets.yml
+```
+
+* To regenerate existing passwords, add the ``--regen`` flag.
+
+![logo](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/images/installation-workflow-run-playbooks.png)
+
+##### Run the playbooks to install OpenStack¶
+
+* Change to the ``/opt/openstack-ansible/playbooks`` directory.
+* Run the host setup playbook:
+```
+# openstack-ansible setup-hosts.yml
+```
+```
+PLAY RECAP ********************************************************************
+...
+deployment_host                :  ok=18   changed=11   unreachable=0    failed=0
+```
+
+* Run the infrastructure setup playbook:
+```
+# openstack-ansible setup-infrastructure.yml
+```
+```
+PLAY RECAP ********************************************************************
+...
+deployment_host                : ok=27   changed=0    unreachable=0    failed=0
+```
+
+* Run the following command to verify the database cluster:
+```
+ansible galera_container -m shell \
+  -a "mysql -h localhost -e 'show status like \"%wsrep_cluster_%\";'"
+```
+
+* Run the OpenStack setup playbook:
+```
+# openstack-ansible setup-openstack.yml
+```
+
