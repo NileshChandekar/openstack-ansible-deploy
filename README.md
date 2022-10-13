@@ -50,8 +50,8 @@ root@617579-logging01:~#
 
 
 
-|Role|FQDN|
-|----|----|
-|Deployer Node|Container|
+|Role|Type|OS|
+|----|----|----|
+|Deployer Node|VM|Ubuntu-20.04|
 
 
