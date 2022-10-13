@@ -52,6 +52,26 @@ root@617579-logging01:~#
 ![logo](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/images/installation-workflow-overview.png)
 
 
+Installation requirements and recommendations¶
+===
+
+#### Software requirements¶
+
+* Ensure that all hosts within an OpenStack-Ansible (OSA) environment meet the following minimum requirements:
+* Ubuntu
+     * Ubuntu 20.04 LTS (Focal Fossa)
+     * Linux kernel version 4.15.0-0-generic or later is required.
+* Secure Shell (SSH) client and server that support public key authentication
+* Network Time Protocol (NTP) client for time synchronization (such as ntpd or chronyd)
+* Python 3.6.*x* or 3.8.*x*
+* en_US.UTF-8 as the locale
+
+
+Prepare the deployment host
+===
+
+![logo](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/images/installation-workflow-deploymenthost.png)
+
 |Role|Type|OS|
 |----|----|----|
 |Deployer Node|VM|Ubuntu-20.04|
