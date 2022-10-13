@@ -40,11 +40,12 @@ root@617579-logging01:~#
 ![Book logo](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/images/Screenshot%202022-10-13%20at%205.58.03%20PM.png)
 
 
-|Network|infra-1|compute-0|compute-1
-|----|----|----|----|
-|default network [192.168.122.0/24]|Yes|Yes|Yes|
-|default network [192.168.122.0/24]|Yes|Yes|Yes|
-|default network [192.168.122.0/24]|Yes|Yes|Yes|
+|Network|deployer nodeinfra-1|compute-0|compute-1
+|----|----|----|----|----|
+|default network [192.168.122.0/24]|Yes|Yes|Yes|Yes|
+|provisioning network [192.168.24.0/24]|Yes|Yes|Yes|Yes|
+|vlannet network [172.29.0.0/24]|No|Yes|Yes|Yes|
+|public network [192.168.200.0/24]|Yes|Yes|Yes|Yes|
 
 
 
