@@ -43,6 +43,8 @@ root@617579-logging01:~#
 |Network|infra-1|compute-0|compute-1
 |----|----|----|----|
 |default network [192.168.122.0/24]|Yes|Yes|Yes|
+|default network [192.168.122.0/24]|Yes|Yes|Yes|
+|default network [192.168.122.0/24]|Yes|Yes|Yes|
 
 
 
