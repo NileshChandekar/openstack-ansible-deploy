@@ -1,0 +1,97 @@
+root@ubuntu:~# grep ^[^#]  /etc/openstack_deploy/openstack_user_config.yml
+---
+cidr_networks:
+  container: 192.168.24.0/24
+  tunnel: 172.29.240.0/24
+  storage: 172.29.244.0/24
+used_ips:
+  - "192.168.24.1,192.168.24.175"
+  - "172.29.240.1,172.29.240.20"
+  - "172.29.244.1,172.29.244.20"
+global_overrides:
+  # The internal and external VIP should be different IPs, however they
+  # do not need to be on separate networks.
+  external_lb_vip_address: 192.168.122.9
+  internal_lb_vip_address: 192.168.24.9
+  management_bridge: "br-mgmt"
+  provider_networks:
+    - network:
+        container_bridge: "br-mgmt"
+        container_type: "veth"
+        container_interface: "eth1"
+        ip_from_q: "container"
+        type: "raw"
+        group_binds:
+          - all_containers
+          - hosts
+        is_container_address: true
+    - network:
+        container_bridge: "br-vxlan"
+        container_type: "veth"
+        container_interface: "eth10"
+        ip_from_q: "tunnel"
+        type: "vxlan"
+        range: "1:1000"
+        net_name: "vxlan"
+        group_binds:
+          - neutron_linuxbridge_agent
+    - network:
+        container_bridge: "br-vlan"
+        container_type: "veth"
+        container_interface: "eth12"
+        host_bind_override: "eth12"
+        type: "vlan"
+        net_name: "vlan"
+        range: "2246:2250"
+        group_binds:
+          - neutron_linuxbridge_agent
+    - network:
+        container_bridge: "br-storage"
+        container_type: "veth"
+        container_interface: "eth2"
+        ip_from_q: "storage"
+        type: "raw"
+        group_binds:
+          - glance_api
+          - cinder_api
+          - cinder_volume
+          - nova_compute
+shared-infra_hosts:
+  infra1:
+    ip: 192.168.24.11
+repo-infra_hosts:
+  infra1:
+    ip: 192.168.24.11
+haproxy_hosts:
+  infra1:
+    ip: 192.168.24.11
+identity_hosts:
+  infra1:
+    ip: 192.168.24.11
+storage-infra_hosts:
+  infra1:
+    ip: 192.168.24.11
+image_hosts:
+  infra1:
+    ip: 192.168.24.11
+placement-infra_hosts:
+  infra1:
+    ip: 192.168.24.11
+compute-infra_hosts:
+  infra1:
+    ip: 192.168.24.11
+orchestration_hosts:
+  infra1:
+    ip: 192.168.24.11
+dashboard_hosts:
+  infra1:
+    ip: 192.168.24.11
+network_hosts:
+  infra1:
+    ip: 192.168.24.11
+compute_hosts:
+  compute1:
+    ip: 192.168.24.12
+  compute2:
+    ip: 192.168.24.13
+root@ubuntu:~# 
