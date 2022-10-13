@@ -151,3 +151,40 @@ Prepare the deployment host
 ![logo](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/images/installation-workflow-targethosts.png)
 
 ##### Configuring the operating system¶
+
+* Configure Ubuntu¶
+     * Update package source lists:
+     ```
+     # apt update -y
+     ```
+     * Upgrade the system packages and kernel:
+     ```
+     # apt dist-upgrade -y 
+     ```
+     * Install additional software packages. 
+     ```
+     # apt install bridge-utils debootstrap ifenslave ifenslave-2.6 lsof lvm2 openssh-server sudo tcpdump vlan python3 -y 
+     ```
+
+
+|Role|Type|OS|
+|----|----|----|
+|Deployer Node|VM|Ubuntu-20.04|
+
+
+Configure the deployment
+===
+
+![logo](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/images/installation-workflow-configure-deployment.png)
+
+##### Initial environment configuration¶
+
+* Copy the contents of the /opt/openstack-ansible/etc/openstack_deploy directory to the /etc/openstack_deploy directory.
+
+     ```
+     root@ubuntu:/opt/openstack-ansible# cp -R etc/openstack_deploy/ /etc/
+     ```
+
+* Change to the ``/etc/openstack_deploy`` directory. Here is the config files 
+* [openstack_user_config.yml](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/sampleconfigs/openstack_user_config.yml)
+* [user_variables.yml](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/sampleconfigs/user_variables.yml)
