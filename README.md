@@ -77,3 +77,43 @@ Prepare the deployment host
 |Deployer Node|VM|Ubuntu-20.04|
 
 
+#### Configuring the operating system¶
+
+* Configure Ubuntu¶
+     * Update package source lists:
+     ```
+     # apt update
+     ```
+     * Upgrade the system packages and kernel:
+     ```
+     # apt dist-upgrade
+     ```
+     * Reboot the host. 
+     * Install additional software packages if they were not installed during the operating system installation:
+     ```
+     # apt install build-essential git chrony openssh-server python3-dev sudo
+     ```
+     * Configure NTP to synchronize with a suitable time source.
+     
+* Install the source and dependencies¶
+     * Clone the latest stable release of the OpenStack-Ansible Git repository in the /opt/openstack-ansible directory:
+     ```
+     # git clone https://opendev.org/openstack/openstack-ansible /opt/openstack-ansible
+     ```
+     ```
+     root@ubuntu:/opt/openstack-ansible# git branch -vva
+     (HEAD detached at origin/stable/wallaby) 236e2677f Bump OpenStack-Ansible Wallaby
+     * master                                   e01385fb7 [origin/master] Merge "Bump ansible-core version to 2.13.4"
+       remotes/origin/HEAD                      -> origin/master
+       remotes/origin/master                    e01385fb7 Merge "Bump ansible-core version to 2.13.4"
+       remotes/origin/stable/queens             e9a41ec77 Fix watchdog version
+       remotes/origin/stable/rocky              24938f3db Merge "Remove periodic CI jobs for rocky branch" into stable/rocky
+       remotes/origin/stable/stein              d12bd110c Mark OSA repository as safe in git.config in CI
+       remotes/origin/stable/train              65f0aa5ee Mark OSA repository as safe in git.config in CI
+       remotes/origin/stable/ussuri             4ea5b8b24 Mark OSA repository as safe in git.config in CI
+       remotes/origin/stable/victoria           7df32250d Merge "Add mistra-extra repo" into stable/victoria
+       remotes/origin/stable/wallaby            236e2677f Bump OpenStack-Ansible Wallaby
+       remotes/origin/stable/xena               5502f685d Bump OpenStack-Ansible Xena
+       remotes/origin/stable/yoga               18f5ea263 Add Rocky Linux 9 to zuul and docs
+       root@ubuntu:/opt/openstack-ansible# 
+     ```
