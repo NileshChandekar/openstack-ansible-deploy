@@ -49,6 +49,8 @@ root@617579-logging01:~#
 
 
 
+![logo](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/images/installation-workflow-overview.png)
+
 
 |Role|Type|OS|
 |----|----|----|
