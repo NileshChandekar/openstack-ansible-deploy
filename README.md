@@ -38,8 +38,7 @@ root@617579-logging01:~#
 ```
 
 
-![Image ipa]([https://github.com/NileshChandekar/lxd_containers/blob/master/images/01111.png](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/images/Screenshot%202022-10-13%20at%205.58.03%20PM.png)
-
+[[https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/images/Screenshot%202022-10-13%20at%205.58.03%20PM.png]]
 
 
 |Role|FQDN|
