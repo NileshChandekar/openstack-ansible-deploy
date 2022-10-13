@@ -142,4 +142,12 @@ Prepare the deployment host
       ```
       # scripts/bootstrap-ansible.sh
       ```
-      
+
+|Role|Type|OS|
+|----|----|----|
+|Overcloud Nodes [target]|VM|Ubuntu-20.04|
+
+
+![logo](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/images/installation-workflow-targethosts.png)
+
+##### Configuring the operating system¶
