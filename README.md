@@ -42,8 +42,8 @@ root@617579-logging01:~#
 Sample Network Interfaces Config
 ===
 
-[infraNode](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/sampleconfigs/infra-interfaces)
-[ComputeNode](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/sampleconfigs/compute-interfaces)
+* [infraNode](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/sampleconfigs/infra-interfaces)
+* [ComputeNode](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/sampleconfigs/compute-interfaces)
 
 
 ![Book logo](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/images/Screenshot%202022-10-13%20at%205.58.03%20PM.png)
