@@ -39,6 +39,12 @@ root@617579-logging01:~# virsh net-list | egrep -i "cluster_network|public_netwo
 root@617579-logging01:~# 
 ```
 
+Sample Network Interfaces Config
+===
+
+[infra-1](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/sampleconfigs/infra-interfaces)
+[Compute](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/sampleconfigs/compute-interfaces)
+
 ![Book logo](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/images/Screenshot%202022-10-13%20at%205.58.03%20PM.png)
 
 
