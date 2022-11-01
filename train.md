@@ -42,7 +42,7 @@ Sample Network Interfaces Config
 
 
 |Network|deployer node|infra-*|compute-*|Interfaces|
-|----|----|----|----|----|----|
+|----|----|----|----|----|
 |external network [192.168.122.0/24]|Yes|Yes|Yes|enp1s0|
 |providernet network [192.168.200.0/24]|Yes|Yes|Yes|enp2s0|
 |vlannet network [172.29.0.0/24]|No|Yes|Yes|enp3s0|
