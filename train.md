@@ -45,8 +45,8 @@ Sample Network Interfaces Config
 |----|----|----|----|
 |external network [192.168.122.0/24]|Yes|Yes|enp1s0|
 |providernet network [192.168.200.0/24]|Yes|Yes|enp2s0|
-|vlannet network [172.29.0.0/24]|No|Yes|enp3s0|
-|provisioning network [192.168.24.0/24]|Yes|Yes|enp9s0|
+|vlannet network [172.29.0.0/24]|Yes|Yes|enp3s0|
+|provisioning network [192.168.24.0/24]|Yes|Yes|enp4s0|
 
 
 ![logo](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/images/installation-workflow-overview.png)
