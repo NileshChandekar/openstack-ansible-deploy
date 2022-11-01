@@ -1,0 +1,8 @@
+---
+debug: false
+install_method: source
+haproxy_keepalived_external_vip_cidr: "192.168.122.100/32"
+haproxy_keepalived_internal_vip_cidr: "192.168.24.100/32"
+haproxy_keepalived_external_interface: enp1s0
+haproxy_keepalived_internal_interface: br-mgmt
+generate_fsid: false
