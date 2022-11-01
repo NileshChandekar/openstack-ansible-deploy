@@ -3,7 +3,7 @@ Step by Step - Openstack-Ansible[OSA] Deployment
 
 ![logo](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/images/openstack-ansible.png)
 
-Clear on Links for Deployment. 
+Click on Link for Choice of Deployment. 
 ===
 
 [Train](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/train.md)
