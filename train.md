@@ -41,12 +41,12 @@ Sample Network Interfaces Config
 ![Book logo](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/images/Screenshot%202022-10-13%20at%205.58.03%20PM.png)
 
 
-|Network|deployer node|infra-*|compute-*|Interfaces|
-|----|----|----|----|----|
-|external network [192.168.122.0/24]|Yes|Yes|Yes|enp1s0|
-|providernet network [192.168.200.0/24]|Yes|Yes|Yes|enp2s0|
-|vlannet network [172.29.0.0/24]|No|Yes|Yes|enp3s0|
-|provisioning network [192.168.24.0/24]|Yes|Yes|Yes|enp9s0|
+|Network|infra-* + [deployer node]|compute-*|Interfaces|
+|----|----|----|----|
+|external network [192.168.122.0/24]|Yes|Yes|enp1s0|
+|providernet network [192.168.200.0/24]|Yes|Yes|enp2s0|
+|vlannet network [172.29.0.0/24]|No|Yes|enp3s0|
+|provisioning network [192.168.24.0/24]|Yes|Yes|enp9s0|
 
 
 ![logo](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/images/installation-workflow-overview.png)
