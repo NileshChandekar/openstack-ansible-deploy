@@ -1,7 +1,7 @@
 Step by Step - Openstack-Ansible[OSA] Deployment
 ===
 
-![logo](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/images/Screenshot%202022-10-14%20at%2012.18.10%20AM.png)
+![logo](https://github.com/NileshChandekar/openstack-ansible-deploy/blob/main/images/index.png)
 
 * OpenStack-Ansible (OSA) uses the Ansible IT automation engine to deploy an OpenStack environment on Ubuntu, with CentOS and openSUSE. 
 
