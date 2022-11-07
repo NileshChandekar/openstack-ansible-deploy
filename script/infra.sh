@@ -1,171 +1,161 @@
-
 #!/bin/bash
-
-user=$(id | awk '{print $1}' | sed 's/.*(//;s/)$//')
-for i in $( sudo virsh list --all | grep -i $user | egrep -i "osp" | awk {'print $2'} ) ; \
-do virsh destroy $i ; done
-
-for i in $(sudo virsh list --all | grep -i $user | egrep -i "osp" | awk {'print $2'} ) ; \
-do virsh undefine  $i ; done
-
-rm -fr /openstack/images/deployosp/* 
-mkdir /tmp/osptxtfiles
-
-clear
-read -p "Enter Controller Count: " con
-read -p "Enter Compute Count: " com
-read -p "Enter Controller Memory Size: " mem_con
-read -p "Enter Compute Memory Size: " mem_com
-
 clear
 
-echo -e "\033[1;36mCreating osp Deploy OS Directory\033[0m"
+
+read -p "Enter Infra Count: " infra
+read -p "Enter Compute Count: " cmpt
+
+read -p "Enter Infra Memory Size: " mem_infra
+read -p "Enter Compute Memory Size: " mem_cmpt
+
+echo -e "\033[1;36mCreating Directories\033[0m"
+user=$(id | awk '{print $1}' | sed 's/.*(//;s/)$//')
+
+sudo rm -fr /openstack/images/bionic/$user*
+sudo rm -fr /tmp/$user
+sudo mkdir -p /openstack/images/bionic
+mkdir -p /tmp/$user/osafiles
 
 
-if ! ls -al /openstack/images/deployosp ; then
-  echo "Creating Directory" ; \
-    mkdir /openstack/images/deployosp ;\
-  else
-    echo "Directory already exist."
+
+
+echo -e "\033[1;36mUDownload Ubuntu Image\033[0m"
+cd /openstack/images/bionic
+if ! ls -al bionic-server-cloudimg-amd64.qcow2 ; then
+      echo "Downloading Ubuntu Image" ; \
+      sudo rsync -aivh --progress /tmp/bionic-server-cloudimg-amd64.qcow2 /openstack/images/bionic/  > /dev/null
+ else 
+      echo "Server Image already exist."
 fi
 
-cd /openstack/images/deployosp/
 
+echo -e "\033[1;36mSpawning Openstack-Ansible  $infra ** Infra Nodes **\033[0m"
 
-
-echo -e "\033[1;36mCreating Guest Qcow2\033[0m"
-
-### Create guest qcow2
-
-if ! ls -al centos8-guest.qcow2 ; then   
-    echo "Creating centos8-guest qcow2 image" ; \
-    qemu-img create -f qcow2 centos8-guest.qcow2 80G ;  \
-else     
-    echo "Guest Image already exist."; 
-fi
-
-echo -e "\033[1;36mDownloading Image\033[0m"
-
-### Downloading image 
-  
-if ! ls -al CentOS-Stream-GenericCloud-8-20220125.1.x86_64.qcow2 ; then   
-   echo "Downloading Centos-8 Server Image" ; \
-   curl -O https://cloud.centos.org/centos/8-stream/x86_64/images/CentOS-Stream-GenericCloud-8-20220125.1.x86_64.qcow2 ; \
-else     
-    echo "Server Image already exist."; 
-fi
-
-echo -e "\033[1;36mModify Image\033[0m"
-
-### Virt resize
-
-cd /openstack/images/deployosp/
-virt-resize --expand /dev/sda1 \
-/openstack/images/deployosp/CentOS-Stream-GenericCloud-8-20220125.1.x86_64.qcow2 \
-/openstack/images/deployosp/centos8-guest.qcow2
-
-
-cd /openstack/images/deployosp/
-qemu-img create \
--f qcow2 \
--b /openstack/images/deployosp/centos8-guest.qcow2 \
-/openstack/images/deployosp/dummy-osp-node.qcow2
-
-virt-customize \
--a /openstack/images/deployosp/dummy-osp-node.qcow2 \
---root-password password:0 \
---uninstall cloud-init
-
-
-
-
-
-echo -e "\033[1;36mCreating osp $con OS Disk\033[0m"
+cd /openstack/images/bionic
 user=$(id | awk '{print $1}' | sed 's/.*(//;s/)$//')
 i=0
 j=0
-for a in `seq 1 $con` ; \
-do cp /openstack/images/deployosp/dummy-osp-node.qcow2 $user-osp-con-node-$((j++)).qcow2 ; \
-done 
-
-echo -e "\033[1;36mCreating osp $com OS Disk\033[0m"
-user=$(id | awk '{print $1}' | sed 's/.*(//;s/)$//')
+for img in `seq 1 $infra`; \
+    do sudo qemu-img create \
+    -f qcow2 \
+    -F qcow2 \
+    -o backing_file=/openstack/images/bionic/bionic-server-cloudimg-amd64.qcow2 \
+    /openstack/images/bionic/$user-osa-bionic-infra-$((j++)).qcow2 ; \
+    done > /dev/null
 i=0
 j=0
-for i in `seq 1 $com` ; \
-do cp /openstack/images/deployosp/dummy-osp-node.qcow2 $user-osp-com-node-$((j++)).qcow2 ; \
-done 
 
 
-echo -e "\033[1;36mSpawning $con osp controller\033[0m"
-user=$(id | awk '{print $1}' | sed 's/.*(//;s/)$//')
-i=0
-j=0
-cmd_osp() {
-    sudo virt-install \
-    --name $user-osp-con-node-$((i++)) \
-    --ram $mem_con \
-    --vcpus 4 \
-    --disk path=/openstack/images/deployosp/$user-osp-con-node-$((j++)).qcow2,device=disk,bus=virtio,format=qcow2 \
-    --os-variant fedora10 \
-    --import \
-    --vnc \
-    --noautoconsole \
-    --network bridge=clust_br5,model=virtio \
-    --network network:public_network 
+cmd_infra() {
+sudo virt-install --name $user-osa-bionic-infra-$((i++))  \
+--memory $mem_infra \
+--vcpus 6 \
+--disk /openstack/images/bionic/$user-osa-bionic-infra-$((j++)).qcow2,bus=sata \
+--import \
+--os-variant ubuntu20.04 \
+--network network:external \
+--network bridge=providerbr0,model=virtio \
+--network bridge=vlanbr0,model=virtio \
+--network bridge=provisionbr0,model=virtio \
+--noautoconsole \
+--vnc \
+--cpu SandyBridge,+vmx
 }
 
-for a in `seq 1 $con`; do cmd_osp ; done
+for a in `seq 1 $infra`; do cmd_infra ; done 
 
-echo -e "\033[1;36mSpawning $com osp comupte\033[0m"
+
+
+echo -e "\033[1;36mSpawning Openstack-Ansible  $cmpt ** Compute Nodes **\033[0m"
+
+cd /openstack/images/bionic
+user=$(id | awk '{print $1}' | sed 's/.*(//;s/)$//')
 i=0
 j=0
-cmd_osp() {
-    sudo virt-install \
-    --name $user-osp-com-node-$((i++)) \
-    --ram $mem_com \
-    --vcpus 4 \
-    --disk path=/openstack/images/deployosp/$user-osp-com-node-$((j++)).qcow2,device=disk,bus=virtio,format=qcow2 \
-    --os-variant fedora10 \
-    --import \
-    --vnc \
-    --noautoconsole \
-    --network bridge=clust_br5,model=virtio \
-    --network network:public_network 
+for img in `seq 1 $cmpt`; \
+    do sudo qemu-img create \
+    -f qcow2 \
+    -F qcow2 \
+    -o backing_file=/openstack/images/bionic/bionic-server-cloudimg-amd64.qcow2 \
+    /openstack/images/bionic/$user-osa-bionic-cmpt-$((j++)).qcow2 ; \
+    done > /dev/null
+i=0
+j=0
+
+
+
+cmd_cmpt() {
+sudo virt-install --name $user-osa-bionic-cmpt-$((i++))  \
+--memory $mem_cmpt \
+--vcpus 6 \
+--disk /openstack/images/bionic/$user-osa-bionic-cmpt-$((j++)).qcow2,bus=sata \
+--import \
+--os-variant ubuntu20.04 \
+--network network:external \
+--network bridge=providerbr0,model=virtio \
+--network bridge=vlanbr0,model=virtio \
+--network bridge=provisionbr0,model=virtio \
+--noautoconsole \
+--vnc \
+--cpu SandyBridge,+vmx
 }
 
-for a in `seq 1 $com`; do cmd_osp ; done
+for a in `seq 1 $cmpt`; do cmd_cmpt ; done
+
+clear
+sudo virsh list --all | grep -i $user | grep -i osa-bionic 
+
+echo -e "\033[1;36mWait for 100 Second\033[0m"
 
 
 
-echo -e "\033[1;36mGetting IP details\033[0m"
+# 1. Paste the `progress` function in your bash script.
+function progress () {
+    s=0.5;
+    f=0.25;
+    echo -ne "\r\n";
+    while true; do
+           sleep $f && s=`echo ${s} + ${f} + ${f} | bc` && echo -ne "\r\t[             ] Elapsed: ${s} secs." \
+        && sleep $f && s=`echo ${s} + ${f} + ${f} | bc` && echo -ne "\r\t[>            ] Elapsed: ${s} secs." \
+        && sleep $f && s=`echo ${s} + ${f} + ${f} | bc` && echo -ne "\r\t[-->          ] Elapsed: ${s} secs." \
+        && sleep $f && s=`echo ${s} + ${f} + ${f} | bc` && echo -ne "\r\t[--->         ] Elapsed: ${s} secs." \
+        && sleep $f && s=`echo ${s} + ${f} + ${f} | bc` && echo -ne "\r\t[---->        ] Elapsed: ${s} secs." \
+        && sleep $f && s=`echo ${s} + ${f} + ${f} | bc` && echo -ne "\r\t[----->       ] Elapsed: ${s} secs." \
+        && sleep $f && s=`echo ${s} + ${f} + ${f} | bc` && echo -ne "\r\t[------>      ] Elapsed: ${s} secs." \
+        && sleep $f && s=`echo ${s} + ${f} + ${f} | bc` && echo -ne "\r\t[------->     ] Elapsed: ${s} secs." \
+        && sleep $f && s=`echo ${s} + ${f} + ${f} | bc` && echo -ne "\r\t[-------->    ] Elapsed: ${s} secs." \
+        && sleep $f && s=`echo ${s} + ${f} + ${f} | bc` && echo -ne "\r\t[--------->   ] Elapsed: ${s} secs." \
+        && sleep $f && s=`echo ${s} + ${f} + ${f} | bc` && echo -ne "\r\t[---------->  ] Elapsed: ${s} secs." \
+        && sleep $f && s=`echo ${s} + ${f} + ${f} | bc` && echo -ne "\r\t[-----------> ] Elapsed: ${s} secs.";
+           sleep $f && s=`echo ${s} + ${f} + ${f} | bc` && echo -ne "\r\t[------------>] Elapsed: ${s} secs.";
+    done;
+}
+
+# 2. Then, somewhere in your script, wrap any long running process call as follows:
+while true; do progress; done &
+    sleep 50; # or, whatever
+kill $!; trap 'kill $!' SIGTERM
 
 
-sleep 20 
-
-for IP in $(sudo virsh list --all | grep -i osp | awk {'print $2'}); \
-do sudo virsh domifaddr $IP| awk {'print $4'} | awk 'NR>2'|  cut -d'/' -f1; \
-done  > /tmp/osptxtfiles/ip.txt
-
-
-echo -e "\033[1;36mGetting HOSTENTRY Point\033[0m"
 
 user=$(id | awk '{print $1}' | sed 's/.*(//;s/)$//')
+for i in $(sudo virsh list --all | grep -i $user| grep -i osa | awk {'print $2'}); \
+do echo $i ;  \
+sudo virsh domifaddr $i | egrep -i 192 | awk {'print $4'} ; \
+done > /tmp/$user/osafiles/test.txt
 
-for ADDR in $(sudo virsh list --all | grep -i osp | awk {'print $2'}); \
-do echo $ADDR ;  \
-sudo virsh domifaddr $ADDR | egrep -i 192 | awk {'print $4'} ; \
-done > /tmp/osptxtfiles/1.txt ; \
-sed 'N;s/\n/ /'  /tmp/osptxtfiles/1.txt > /tmp/osptxtfiles/2.txt ; \
-cat /tmp/osptxtfiles/2.txt | cut -d "/" -f1 > /tmp/osptxtfiles/3.txt ; \
-cat /tmp/osptxtfiles/3.txt | awk '{ print $NF"     "  $1 }' > /tmp/osptxtfiles/hostentry.txt
+sed 'N;s/\n/ /' /tmp/$user/osafiles/test.txt > /tmp/$user/osafiles/test1.txt
+cat /tmp/$user/osafiles/test1.txt | cut -d '/' -f1  > /tmp/$user/osafiles/test2.txt
+cat /tmp/$user/osafiles/test2.txt | awk {'print $1'} > /tmp/$user/osafiles/test5.txt
 
-clear 
+sed 'N;s/\n/ /'  /tmp/$user/osafiles/test.txt  > /tmp/$user/osafiles/test1.txt ; cat /tmp/$user/osafiles/test1.txt | awk {'print $2'} > /tmp/$user/osafiles/test3.txt ; cat /tmp/$user/osafiles/test3.txt | cut -d '/' -f1 > /tmp/$user/osafiles/test4.txt
 
-for p in $(cat /tmp/osptxtfiles/ip.txt); do ping -c1 $p; done
 
-sleep 5 
+clear
 
-clear 
-
-cat /tmp/osptxtfiles/hostentry.txt
+echo -e "\033[1;36mHostname+IP\033[0m"
+cat /tmp/$user/osafiles/test2.txt
+echo -e "\033[1;36mHostname\033[0m"
+cat /tmp/$user/osafiles/test5.txt
+echo -e "\033[1;36mIP\033[0m"
+cat /tmp/$user/osafiles/test4.txt
