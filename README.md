@@ -395,3 +395,22 @@ br-ex           8000.000000000000       no
 root@cc9862ae97a6:/opt/openstack-ansible# 
 ```
 
+c) 
+
+```
+root@cc9862ae97a6:/opt/openstack-ansible# ansible compute_all -m ping 
+```
+
+```
+compute0 | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}
+compute1 | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}
+```
+
+
+
