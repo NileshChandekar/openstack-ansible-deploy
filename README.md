@@ -29,6 +29,14 @@ Basic Openration:
 a) Show all groups and which hosts belong to them:
 
 ```
+cd /opt/openstack-ansible
+```
+
+```
+root@cc9862ae97a6:/opt/openstack-ansible# ./scripts/inventory-manage.py -G
+```
+
+```
 +---------------------------+------------------------------------------+
 | groups                    | container_name                           |
 +---------------------------+------------------------------------------+
@@ -372,4 +380,18 @@ Content-Length: 40
 Percona XtraDB Cluster Node is synced.
 ```
 
-b) 
+b) Check against the group ``compute_all`` 
+
+```
+root@cc9862ae97a6:/opt/openstack-ansible# ansible compute_all -m shell -a "brctl show | grep -i br-ex"
+```
+```
+compute1 | CHANGED | rc=0 >>
+br-ex           8000.000000000000       no
+
+compute0 | CHANGED | rc=0 >>
+br-ex           8000.000000000000       no
+
+root@cc9862ae97a6:/opt/openstack-ansible# 
+```
+
