@@ -1,17 +1,22 @@
-root@firoz-osa-cmpt-0:~# cat /etc/network/interfaces
+root@hector-osa-bionic-cmpt-0:~# cat /etc/network/interfaces
 # Physical interface
 
+### MGMT-Trafic
 auto enp1s0
 iface enp1s0 inet dhcp
 
-auto enp9s0
-iface enp9s0 inet dhcp
-
+### Provider-Trafic
 auto enp2s0
-iface enp2s0 inet manual
+iface enp2s0 inet dhcp
 
+### VLAN-Trafic
 auto enp3s0
 iface enp3s0 inet manual
+
+### ControlPlan-Trafic
+auto enp4s0
+iface enp4s0 inet manual
+
 
 
 # OpenStack Networking VXLAN (tunnel/overlay) VLAN interface
@@ -31,11 +36,12 @@ iface br-mgmt inet static
     bridge_stp off
     bridge_waitport 0
     bridge_fd 0
-    bridge_ports enp2s0
-    address 192.168.24.12
+    bridge_ports enp4s0
+    address 192.168.24.98
     netmask 255.255.252.0
-    gateway 192.168.24.254
-    dns-nameservers 192.168.24.254
+
+
+
 
 # OpenStack Networking VXLAN (tunnel/overlay) bridge
 # The COMPUTE, NETWORK and INFRA nodes must have an IP address on this bridge.
@@ -46,7 +52,7 @@ iface br-vxlan inet static
     bridge_waitport 0
     bridge_fd 0
     bridge_ports enp3s0.30
-    address 172.29.240.12
+    address 172.29.240.98
     netmask 255.255.252.0
 
 # OpenStack Networking VLAN bridge
@@ -64,6 +70,20 @@ iface br-storage inet static
     bridge_waitport 0
     bridge_fd 0
     bridge_ports enp3s0.20
-    address 172.29.244.12
+    address 172.29.244.98
     netmask 255.255.252.0
-root@firoz-osa-cmpt-0:~# 
+
+
+# OpenStack Networking PROVIDER bridge
+auto br-ex
+iface br-ex inet manual
+    bridge_stp off
+    bridge_waitport 0
+    bridge_fd 0
+    bridge_ports enp2s0
+
+
+
+
+source /etc/network/interfaces.d/*.cfg
+root@hector-osa-bionic-cmpt-0:~# 
