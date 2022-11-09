@@ -1,4 +1,3 @@
-root@mukesh-osa-bionic-infra-0:/opt/openstack-ansible/playbooks# cat /etc/openstack_deploy/openstack_user_config.yml
 ---                                 
 cidr_networks:                
   container: 192.168.24.0/24        
@@ -12,8 +11,8 @@ used_ips:
 global_overrides:                                 
   # The internal and external VIP should be different IPs, however they
   # do not need to be on separate networks.
-  external_lb_vip_address: 192.168.122.100
-  internal_lb_vip_address: 192.168.24.100
+  external_lb_vip_address: 192.168.122.99
+  internal_lb_vip_address: 192.168.24.99
   management_bridge: "br-mgmt"
   provider_networks:
     - network:                       
@@ -40,7 +39,7 @@ global_overrides:
         container_bridge: "br-vlan"               
         container_type: "veth"                                                                      
         container_interface: "eth12"
-        host_bind_override: "eth12"
+        host_bind_override: "br-vlan"
         type: "flat"
         net_name: "flat"
         group_binds:
@@ -60,7 +59,7 @@ global_overrides:
         container_bridge: "br-ex"
         container_type: "veth"
         container_interface: "eth12"
-        host_bind_override: "enp4s0"
+        host_bind_override: "enp2s0"
         type: "flat"
         net_name: "physnet1"
         group_binds:
@@ -68,86 +67,124 @@ global_overrides:
 
 shared-infra_hosts:  
   infra0:                   
-    ip: 192.168.24.90                             
+    ip: 192.168.24.35
   infra1:                            
-    ip: 192.168.24.91
+    ip: 192.168.24.69
   infra2:            
-    ip: 192.168.24.92
+    ip: 192.168.24.65
                                                   
 repo-infra_hosts:    
   infra0:            
-    ip: 192.168.24.90                             
+    ip: 192.168.24.35
   infra1:             
-    ip: 192.168.24.91
+    ip: 192.168.24.69
   infra2:            
-    ip: 192.168.24.92
+    ip: 192.168.24.65
                                                   
 haproxy_hosts:        
   infra0:            
-    ip: 192.168.24.90
+    ip: 192.168.24.35
   infra1:            
-    ip: 192.168.24.91
+    ip: 192.168.24.69
   infra2:            
-    ip: 192.168.24.92
+    ip: 192.168.24.65
 identity_hosts:                                                                                     
   infra0:            
-    ip: 192.168.24.90
+    ip: 192.168.24.35
   infra1:  
-    ip: 192.168.24.91
+    ip: 192.168.24.69
   infra2:                                                                                           
-    ip: 192.168.24.92
+    ip: 192.168.24.65
 storage-infra_hosts:
   infra0:
-    ip: 192.168.24.90
+    ip: 192.168.24.35
   infra1:
-    ip: 192.168.24.91
+    ip: 192.168.24.69
   infra2:
-    ip: 192.168.24.92
+    ip: 192.168.24.65
 image_hosts:
   infra0:
-    ip: 192.168.24.90
+    ip: 192.168.24.35
   infra1:
-    ip: 192.168.24.91
+    ip: 192.168.24.69
   infra2:
-    ip: 192.168.24.92
+    ip: 192.168.24.65
 placement-infra_hosts:
   infra0:
-    ip: 192.168.24.90
+    ip: 192.168.24.35
   infra1:
-    ip: 192.168.24.91
+    ip: 192.168.24.69
   infra2:
-    ip: 192.168.24.92
+    ip: 192.168.24.65
 compute-infra_hosts: 
   infra0:            
-    ip: 192.168.24.90                                                                               
-  infra1:            
-    ip: 192.168.24.91
+    ip: 192.168.24.35
+  infra1:
+    ip: 192.168.24.69
   infra2:  
-    ip: 192.168.24.92
+    ip: 192.168.24.65
 orchestration_hosts:                                                                                
   infra0:            
-    ip: 192.168.24.90
+    ip: 192.168.24.35
   infra1:
-    ip: 192.168.24.91
+    ip: 192.168.24.69
   infra2:
-    ip: 192.168.24.92
+    ip: 192.168.24.65
 dashboard_hosts:
   infra0:            
-    ip: 192.168.24.90
+    ip: 192.168.24.35
   infra1:
-    ip: 192.168.24.91
+    ip: 192.168.24.69
   infra2:
-    ip: 192.168.24.92
+    ip: 192.168.24.65
 network_hosts:
   infra0:            
-    ip: 192.168.24.90 
+    ip: 192.168.24.35 
   infra1:
-    ip: 192.168.24.91
+    ip: 192.168.24.69
   infra2:
-    ip: 192.168.24.92
+    ip: 192.168.24.65
 compute_hosts:
-  compute1:          
-    ip: 192.168.24.93
-  compute2:
-    ip: 192.168.24.94
-   
+  compute0:          
+    ip: 192.168.24.98
+  compute1:
+    ip: 192.168.24.53
+
+storage_hosts:
+ infra0:
+  ip: 192.168.24.35
+  container_vars:
+   cinder_backends:
+     limit_container_types: cinder_volume
+     rbd:
+       volume_group: cinder-volumes
+       volume_driver: cinder.volume.drivers.rbd.RBDDriver
+       volume_backend_name: rbd
+       rbd_pool: volumes
+       rbd_ceph_conf: /etc/ceph/ceph.conf
+       rbd_user: cinder
+ infra1:
+  ip: 192.168.24.69
+  container_vars:
+   cinder_backends:
+     limit_container_types: cinder_volume
+     rbd:
+       volume_group: cinder-volumes
+       volume_driver: cinder.volume.drivers.rbd.RBDDriver
+       volume_backend_name: rbd
+       rbd_pool: volumes
+       rbd_ceph_conf: /etc/ceph/ceph.conf
+       rbd_user: cinder
+ infra2:
+  ip: 192.168.24.65
+  container_vars:
+   cinder_backends:
+     limit_container_types: cinder_volume
+     rbd:
+       volume_group: cinder-volumes
+       volume_driver: cinder.volume.drivers.rbd.RBDDriver
+       volume_backend_name: rbd
+       rbd_pool: volumes
+       rbd_ceph_conf: /etc/ceph/ceph.conf
+       rbd_user: cinder
+    
